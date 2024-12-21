@@ -6,7 +6,7 @@
 
 PROJECT_NAME = gdpr_obfuscator
 REGION = eu-west-2
-PYTHON_INTERPRETER = python
+PYTHON_INTERPRETER = python3
 WD=$(shell pwd)
 PYTHONPATH=${WD}
 SHELL := /bin/bash
@@ -22,7 +22,7 @@ create-environment:
 	)
 	@echo ">>> Setting up VirtualEnv."
 	( \
-	    $(PIP) install -q virtualenv virtualenvwrapper; \
+	    $(PIP) install -q virtualenv virtualenvwrapper --break-system-packages; \
 	    virtualenv venv --python=$(PYTHON_INTERPRETER); \
 	)
 
