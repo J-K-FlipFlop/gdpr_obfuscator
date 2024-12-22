@@ -24,24 +24,22 @@ def s3_client(aws_creds):
 
 class TestGetFileContents:
     def test_function_returns_pandas_dataframe(self, s3_client):
-        bucket = "blackwater-ingestion-zone"
+        bucket = "ingested_data"
         s3_client.create_bucket(
             Bucket=bucket,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        timestamp = "2024-05-20 12:10:03.998128"
         filename = "test/data/dummy_csv.csv"
-        key = f"ingested_data/{timestamp}/staff.csv"
+        key = "dummy.csv"
         s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
-        key2 = "last_ran_at.csv"
-        filename2 = f"test/data/last_ran_at.csv"
-        s3_client.upload_file(Filename=filename2, Bucket=bucket, Key=key2)
         session = boto3.session.Session(
             aws_access_key_id="test", aws_secret_access_key="test"
         )
+        path = "s3://ingested_data/dummy.csv"
         result = get_data_from_ingestion_bucket(
-            key=timestamp, filename=key.split("/")[-1], session=session
+            path, session
         )
+        print(result)
         assert isinstance(result["data"], pd.DataFrame)
 
     def test_data_in_result_in_expected_format_and_type(self, s3_client):
