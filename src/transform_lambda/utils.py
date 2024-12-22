@@ -35,7 +35,7 @@ def censor_sensitive_data(data, pii_fields):
 
     Args:
         data: dataframe containing sensitive information
-        pii_fields: personally identifiable information fields stored as strings in a list
+        pii_fields: list containing personally identifiable information fields
 
     Returns:
         A dictionary containing the following:
