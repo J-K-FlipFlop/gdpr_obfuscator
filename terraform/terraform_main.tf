@@ -14,8 +14,6 @@ terraform {
 
 provider "aws" {
   region = "eu-west-2"
-  aws_access_key_id = "AKIAXOJS4S6F5RNV5S5H"
-  aws_secret_access_key = "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"
   default_tags {
     tags = {
       ProjectName  = "gdpr obfuscator"
