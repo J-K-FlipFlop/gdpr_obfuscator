@@ -24,8 +24,14 @@ def lambda_handler(event, context):
     bucket_path = "s3://test-bucket-1-ac-gdpr"
     pii_fields = ["first_name","email_address"]
 
-    response = censor_sensitive_data(client, session, bucket_path, pii_fields)
-    print(response)
+    response1 = get_data_from_ingestion_bucket(bucket_path, session)
+
+    print(response1)
+
+    data = response1["data"]
+
+    response2 = censor_sensitive_data(data, pii_fields)
+    print(response2)
 
 def aws_creds():
     os.environ["AWS_ACCESS_KEY_ID"] = "test"
