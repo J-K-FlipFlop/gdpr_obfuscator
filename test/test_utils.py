@@ -4,7 +4,7 @@ import os
 import pandas as pd
 import awswrangler as wr
 from moto import mock_aws
-from src.transform_lambda.utils import (
+from transform_lambda.csv_utils import (
     get_data_from_ingestion_bucket
 )
 from botocore.exceptions import ClientError
