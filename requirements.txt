@@ -6,7 +6,7 @@
 #
 asn1crypto==1.5.1
     # via scramp
-awswrangler==3.7.3
+awswrangler==3.10.1
     # via -r requirements.in
 boto3==1.34.88
     # via
