@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import awswrangler as wr
 from awswrangler.exceptions import NoFilesFound
+import io
 
 def get_json_data_from_ingestion_bucket(
     path: str, session: boto3.session.Session
@@ -47,10 +48,12 @@ def write_json_data(
 
     if isinstance(data, pd.DataFrame):
         try:
-            data.to_json(f"src/{file_name}")
+            new_json = data.to_json()
+            new_str_obj = io.StringIO(new_json)
             return {
                 "status": "success",
                 "message": f"written to {file_name}",
+                "byte_stream": new_str_obj
             }
         except ClientError as e:
             return {

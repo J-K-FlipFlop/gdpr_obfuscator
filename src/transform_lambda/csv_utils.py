@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import awswrangler as wr
 from awswrangler.exceptions import NoFilesFound
+import io
 
 def get_csv_data_from_ingestion_bucket(
     path: str, session: boto3.session.Session
@@ -47,10 +48,12 @@ def write_csv_data(
 
     if isinstance(data, pd.DataFrame):
         try:
-            data.to_csv(f"src/{file_name}", sep='\t')
+            new_csv = data.to_csv()
+            new_str_obj = io.StringIO(new_csv)
             return {
                 "status": "success",
                 "message": f"written to {file_name}",
+                "byte_stream": new_str_obj
             }
         except ClientError as e:
             return {

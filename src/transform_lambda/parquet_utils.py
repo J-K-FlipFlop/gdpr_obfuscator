@@ -4,6 +4,7 @@ from datetime import datetime
 import pandas as pd
 import awswrangler as wr
 from awswrangler.exceptions import NoFilesFound
+import io
 
 def get_parquet_data_from_ingestion_bucket(
     path: str, session: boto3.session.Session
@@ -47,10 +48,11 @@ def write_parquet_data(
 
     if isinstance(data, pd.DataFrame):
         try:
-            data.to_parquet(f"src/{file_name}")
+            new_parquet = data.to_parquet()
             return {
                 "status": "success",
                 "message": f"written to {file_name}",
+                "byte_stream": new_parquet
             }
         except ClientError as e:
             return {

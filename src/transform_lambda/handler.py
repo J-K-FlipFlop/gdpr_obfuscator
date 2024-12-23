@@ -22,7 +22,7 @@ def lambda_handler(event, context):
     session = boto3.session.Session(region_name="eu-west-2")
     client = session.client("s3")
 
-    bucket_path = "s3://test-bucket-1-ac-gdpr/staff.json"
+    bucket_path = "s3://test-bucket-1-ac-gdpr/staff.parquet"
     pii_fields = ["first_name","email_address"]
 
     response1 = get_data_from_bucket(bucket_path, session)
@@ -34,5 +34,6 @@ def lambda_handler(event, context):
 
     response3 = write_sensitive_data(response2)
     print(response3)
+    print(response3["byte_stream"])
 
 lambda_handler("unused", "unused")
