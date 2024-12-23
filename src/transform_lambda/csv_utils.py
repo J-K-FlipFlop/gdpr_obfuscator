@@ -23,32 +23,42 @@ def get_csv_data_from_ingestion_bucket(
 
     try:
         df = wr.s3.read_csv(path=path, boto3_session=session)
-        return {"status": "success", "data": df}
+        return {"status": "success", "data": df, "format": ".csv"}
     except ClientError as ce:
         return {"status": "failure", "message": ce.response}
     except NoFilesFound as nff:
         return {"status": "failure", "message": nff}
     
-def censor_sensitive_data(data, pii_fields):
-
-    """Reads a data frame and censors the given fields
+def write_csv_data(
+    data: pd.DataFrame,
+) -> dict:
+    """Writes a pandas dataframe to csv format
 
     Args:
-        data: dataframe containing sensitive information
-        pii_fields: list containing personally identifiable information fields
+        data: a pandas dataframe
 
     Returns:
         A dictionary containing the following:
             status: shows whether the function ran successfully
-            data: a pandas dataframe containing censored data (if successful)
-            message: a relevant error message (if unsuccessful)
+            message: a relevant success/failure message
     """
 
-    df = data
-    
-    try:
-        for field in pii_fields:
-            df[field] = "***"
-        return {"status": "success", "data": df}
-    except ClientError as ce:
-        return {"status": "failure", "message": ce.response}
+    file_name = "obfuscated_data.csv"
+
+    if isinstance(data, pd.DataFrame):
+        try:
+            data.to_csv(f"src/{file_name}", sep='\t')
+            return {
+                "status": "success",
+                "message": f"written to {file_name}",
+            }
+        except ClientError as e:
+            return {
+                "status": "failure",
+                "message": e.response,
+            }
+    else:
+        return {
+            "status": "failure",
+            "message": f"Data is in wrong format {str(type(data))} is not a pandas dataframe",
+        }
