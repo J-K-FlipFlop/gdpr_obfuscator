@@ -21,3 +21,6 @@ zen.txt
 *.tfstate*
 .env
 **/aws
+**/obfuscated_data.csv
+**/obfuscated_data.json
+**/obfuscated_data.parquet
