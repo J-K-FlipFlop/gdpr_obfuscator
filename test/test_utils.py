@@ -4,8 +4,9 @@ import os
 import pandas as pd
 import awswrangler as wr
 from moto import mock_aws
-from transform_lambda.csv_utils import (
-    get_data_from_ingestion_bucket
+from src.transform_lambda.utils import (
+    censor_sensitive_data,
+    get_data_from_bucket
 )
 from botocore.exceptions import ClientError
 
@@ -29,14 +30,14 @@ class TestGetFileContents:
             Bucket=bucket,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        filename = "test/data/dummy_csv.csv"
+        filename = "../test/data/dummy_csv.csv"
         key = "dummy.csv"
         s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
         session = boto3.session.Session(
             aws_access_key_id="test", aws_secret_access_key="test"
         )
         path = "s3://ingested_data/dummy.csv"
-        result = get_data_from_ingestion_bucket(
+        result = get_data_from_bucket(
             path, session
         )
         assert isinstance(result["data"], pd.DataFrame)
@@ -60,10 +61,10 @@ class TestGetFileContents:
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
         path = "s3://wrong_bucket/dummy.csv"
-        result = get_data_from_ingestion_bucket(
+        result = get_data_from_bucket(
             path, session=session
         )
         assert result["status"] == "failure"
         assert (
-            str(result["message"]) == f"No files Found on: s3://{bucket}/dummy_csv."
+            str(result["message"]) == f"No files Found on: s3://{path}/dummy_csv."
         )
