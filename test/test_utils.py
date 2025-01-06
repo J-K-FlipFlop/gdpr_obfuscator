@@ -6,7 +6,8 @@ import awswrangler as wr
 from moto import mock_aws
 from src.transform_lambda.utils import (
     censor_sensitive_data,
-    get_data_from_bucket
+    get_data_from_bucket,
+    write_sensitive_data
 )
 from botocore.exceptions import ClientError
 
@@ -42,16 +43,7 @@ class TestGetFileContents:
         )
         assert isinstance(result["data"], pd.DataFrame)
 
-    # def test_missing_bucket_raises_client_error(self, s3_client):
-    #     session = boto3.session.Session(
-    #         aws_access_key_id="test", aws_secret_access_key="test"
-    #     )
-    #     input_key = "ingested_data/2024-05-20 12:10:03.998128/staff.csv"
-    #     result = get_data_from_ingestion_bucket(input_key, session)
-    #     assert result["status"] == "failure"
-    #     assert result["message"]["Error"]["Code"] == "NoSuchBucket"
-
-    def test_missing_missing_bucket_raises_client_error(self, s3_client):
+    def test_missing_bucket_raises_correct_client_error(self, s3_client):
         session = boto3.session.Session(
             aws_access_key_id="test", aws_secret_access_key="test"
         )
@@ -66,5 +58,78 @@ class TestGetFileContents:
         )
         assert result["status"] == "failure"
         assert (
-            str(result["message"]) == f"No files Found on: s3://{path}/dummy_csv."
+            str(result["message"]["Error"]["Code"]) == "NoSuchBucket"
+        )
+    
+    def test_function_identifies_csv_correctly(self, s3_client):
+        bucket = "ingested_data"
+        s3_client.create_bucket(
+            Bucket=bucket,
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        filename = "../test/data/dummy_csv.csv"
+        key = "dummy.csv"
+        s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
+        session = boto3.session.Session(
+            aws_access_key_id="test", aws_secret_access_key="test"
+        )
+        path = "s3://ingested_data/dummy.csv"
+        result = get_data_from_bucket(
+            path, session
+        )
+        assert result["format"] == ".csv"
+
+    def test_function_identifies_parquet_correctly(self, s3_client):
+        bucket = "ingested_data"
+        s3_client.create_bucket(
+            Bucket=bucket,
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        filename = "../test/data/dummy_parquet.parquet"
+        key = "dummy.parquet"
+        s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
+        session = boto3.session.Session(
+            aws_access_key_id="test", aws_secret_access_key="test"
+        )
+        path = "s3://ingested_data/dummy.parquet"
+        result = get_data_from_bucket(
+            path, session
+        )
+        assert result["format"] == ".parquet"
+
+    def test_function_identifies_json_correctly(self, s3_client):
+        bucket = "ingested_data"
+        s3_client.create_bucket(
+            Bucket=bucket,
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        filename = "../test/data/dummy_json.json"
+        key = "dummy.json"
+        s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
+        session = boto3.session.Session(
+            aws_access_key_id="test", aws_secret_access_key="test"
+        )
+        path = "s3://ingested_data/dummy.json"
+        result = get_data_from_bucket(
+            path, session
+        )
+        assert result["format"] == ".json"
+
+class TestWriteFileContents:
+    def test_missing_bucket_raises_correct_client_error(self, s3_client):
+        session = boto3.session.Session(
+            aws_access_key_id="test", aws_secret_access_key="test"
+        )
+        bucket = "ingested_data"
+        s3_client.create_bucket(
+            Bucket=bucket,
+            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
+        )
+        path = "s3://wrong_bucket/dummy.csv"
+        result = write_sensitive_data(
+            path
+        )
+        assert result["status"] == "failure"
+        assert (
+            str(result["message"]["Error"]["Code"]) == "NoSuchBucket"
         )
