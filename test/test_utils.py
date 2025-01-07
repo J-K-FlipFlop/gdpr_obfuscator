@@ -116,20 +116,78 @@ class TestGetFileContents:
         assert result["format"] == ".json"
 
 class TestWriteFileContents:
-    def test_missing_bucket_raises_correct_client_error(self, s3_client):
-        session = boto3.session.Session(
-            aws_access_key_id="test", aws_secret_access_key="test"
-        )
-        bucket = "ingested_data"
-        s3_client.create_bucket(
-            Bucket=bucket,
-            CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
-        )
-        path = "s3://wrong_bucket/dummy.csv"
+    def test_function_identifies_csv_correctly(self):
+
+        d = {
+        'F Name': ['John', 'Steve', 'Stefani'],
+        'L Name': ['Doe', 'Buscemi', 'Germanotta'],
+        'Username': ['lanfs', 'SBdog420', 'ThaQueenLessthanthree'],
+        'email': ['JohnDoe@protonmail.com', 'SteveyBoy@askjeeves.co.uk', 'LadyGG@aol.com'],
+        'favorate food': ['-', '-', '-'],
+        }
+
+        df = pd.DataFrame(d)
+        response_dict = {'status': 'success', 'data': df, 'format': ".csv"}
         result = write_sensitive_data(
-            path
+            response_dict
         )
-        assert result["status"] == "failure"
-        assert (
-            str(result["message"]["Error"]["Code"]) == "NoSuchBucket"
+        assert result["message"] == "csv written to byte stream"
+
+    def test_function_identifies_parquet_correctly(self):
+
+        d = {
+        'F Name': ['John', 'Steve', 'Stefani'],
+        'L Name': ['Doe', 'Buscemi', 'Germanotta'],
+        'Username': ['lanfs', 'SBdog420', 'ThaQueenLessthanthree'],
+        'email': ['JohnDoe@protonmail.com', 'SteveyBoy@askjeeves.co.uk', 'LadyGG@aol.com'],
+        'favorate food': ['-', '-', '-'],
+        }
+
+        df = pd.DataFrame(d)
+        response_dict = {'status': 'success', 'data': df, 'format': ".parquet"}
+        result = write_sensitive_data(
+            response_dict
         )
+        assert result["message"] == "parquet written to byte stream"
+
+    def test_function_identifies_json_correctly(self):
+
+        d = {
+        'F Name': ['John', 'Steve', 'Stefani'],
+        'L Name': ['Doe', 'Buscemi', 'Germanotta'],
+        'Username': ['lanfs', 'SBdog420', 'ThaQueenLessthanthree'],
+        'email': ['JohnDoe@protonmail.com', 'SteveyBoy@askjeeves.co.uk', 'LadyGG@aol.com'],
+        'favorate food': ['-', '-', '-'],
+        }
+
+        df = pd.DataFrame(d)
+        response_dict = {'status': 'success', 'data': df, 'format': ".json"}
+        result = write_sensitive_data(
+            response_dict
+        )
+        assert result["message"] == "json written to byte stream"
+
+    def test_function_identifies_unsuported_format_correctly(self):
+
+        d = {
+        'F Name': ['John', 'Steve', 'Stefani'],
+        'L Name': ['Doe', 'Buscemi', 'Germanotta'],
+        'Username': ['lanfs', 'SBdog420', 'ThaQueenLessthanthree'],
+        'email': ['JohnDoe@protonmail.com', 'SteveyBoy@askjeeves.co.uk', 'LadyGG@aol.com'],
+        'favorate food': ['-', '-', '-'],
+        }
+
+        df = pd.DataFrame(d)
+        response_dict = {'status': 'success', 'data': df, 'format': ".txt"}
+        result = write_sensitive_data(
+            response_dict
+        )
+        assert result["message"] == "Unsuported data type. Can only process csv, json, and parquet file types"
+
+    def test_function_identifies_unexpected_error_from_poor_input_correctly(self):
+
+        response_dict = {'status': 'failed'}
+        result = write_sensitive_data(
+            response_dict
+        )
+        assert result["message"] == "unexpected error"
