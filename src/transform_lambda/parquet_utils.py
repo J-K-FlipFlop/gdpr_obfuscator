@@ -51,7 +51,7 @@ def write_parquet_data(
             new_parquet = data.to_parquet()
             return {
                 "status": "success",
-                "message": f"written to {file_name}",
+                "message": "parquet written to byte stream",
                 "byte_stream": new_parquet
             }
         except ClientError as e:

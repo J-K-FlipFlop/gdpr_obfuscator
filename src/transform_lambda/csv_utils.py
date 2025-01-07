@@ -52,7 +52,7 @@ def write_csv_data(
             new_str_obj = io.StringIO(new_csv)
             return {
                 "status": "success",
-                "message": f"written to {file_name}",
+                "message": "csv written to byte stream",
                 "byte_stream": new_str_obj
             }
         except ClientError as e:

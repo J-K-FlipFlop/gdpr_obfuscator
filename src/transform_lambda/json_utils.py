@@ -52,7 +52,7 @@ def write_json_data(
             new_str_obj = io.StringIO(new_json)
             return {
                 "status": "success",
-                "message": f"written to {file_name}",
+                "message": "json written to byte stream",
                 "byte_stream": new_str_obj
             }
         except ClientError as e:

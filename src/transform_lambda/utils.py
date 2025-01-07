@@ -18,7 +18,7 @@ from src.transform_lambda.json_utils import (
 )
 import os
 
-def censor_sensitive_data(data, pii_fields):
+def censor_sensitive_data(data: dict, pii_fields: list):
 
     """Reads a data frame and censors the given fields
 
@@ -43,7 +43,7 @@ def censor_sensitive_data(data, pii_fields):
     except ClientError as ce:
         return {"status": "failure", "message": ce.response}
     
-def get_data_from_bucket(bucket_path, session):
+def get_data_from_bucket(bucket_path: str, session: boto3.session.Session):
 
     """Reads a data file from a given path
 
@@ -74,7 +74,7 @@ def get_data_from_bucket(bucket_path, session):
     
     return response
 
-def write_sensitive_data(response_dict):
+def write_sensitive_data(response_dict: dict):
 
     """Reads a data frame into a file
 
@@ -102,11 +102,12 @@ def write_sensitive_data(response_dict):
         else:
             return {
                 "status": "failure",
-                "message": f"Unsuported data type. Can only process csv, json, and parquet file types",
+                "message": "Unsuported data type. Can only process csv, json, and parquet file types",
             }
     except:
         return {
                 "status": "failure",
+                "source of error": response_dict,
                 "message": "unexpected error",
             }
     
