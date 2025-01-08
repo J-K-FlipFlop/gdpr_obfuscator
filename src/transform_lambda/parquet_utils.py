@@ -4,7 +4,11 @@ from datetime import datetime
 import pandas as pd
 import awswrangler as wr
 from awswrangler.exceptions import NoFilesFound
+import logging
 import io
+
+logger = logging.getLogger("ftpuploader")
+
 
 def get_parquet_data_from_ingestion_bucket(
     path: str, session: boto3.session.Session
@@ -29,9 +33,10 @@ def get_parquet_data_from_ingestion_bucket(
         return {"status": "failure", "message": ce.response}
     except NoFilesFound as nff:
         return {"status": "failure", "message": nff}
-    
+
+
 def write_parquet_data(
-    data: pd.DataFrame,
+    data: pd.DataFrame, destination_bucket: str, session: boto3.session.Session
 ) -> dict:
     """Writes a pandas dataframe to parquet format
 
@@ -44,20 +49,27 @@ def write_parquet_data(
             message: a relevant success/failure message
     """
 
-    file_name = "obfuscated_data.parquet"
-
     if isinstance(data, pd.DataFrame):
         try:
-            new_parquet = data.to_parquet()
+            wr.s3.to_parquet(
+                df=data,
+                path=destination_bucket,
+                boto3_session=session,
+            )
             return {
                 "status": "success",
-                "message": "parquet written to byte stream",
-                "byte_stream": new_parquet
+                "message": f"csv written to {destination_bucket}",
             }
         except ClientError as e:
             return {
                 "status": "failure",
                 "message": e.response,
+            }
+        except Exception as e:
+            logger.error("Failed to upload to ftp: %s", repr(e))
+            return {
+                "status": "failure",
+                "message": "did not write to s3. Please specify an appropriate destination i.e s3://my-bucket/my-file.csv",
             }
     else:
         return {

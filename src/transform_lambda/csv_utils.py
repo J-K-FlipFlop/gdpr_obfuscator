@@ -5,6 +5,10 @@ import pandas as pd
 import awswrangler as wr
 from awswrangler.exceptions import NoFilesFound
 import io
+import logging
+
+logger = logging.getLogger("ftpuploader")
+
 
 def get_csv_data_from_ingestion_bucket(
     path: str, session: boto3.session.Session
@@ -29,11 +33,12 @@ def get_csv_data_from_ingestion_bucket(
         return {"status": "failure", "message": ce.response}
     except NoFilesFound as nff:
         return {"status": "failure", "message": nff}
-    
+
+
 def write_csv_data(
-    data: pd.DataFrame,
+    data: pd.DataFrame, destination_bucket: str, session: boto3.session.Session
 ) -> dict:
-    """Writes a pandas dataframe to csv format
+    """Writes a pandas dataframe to csv format in destination bucket
 
     Args:
         data: a pandas dataframe
@@ -44,21 +49,23 @@ def write_csv_data(
             message: a relevant success/failure message
     """
 
-    file_name = "obfuscated_data.csv"
-
     if isinstance(data, pd.DataFrame):
         try:
-            new_csv = data.to_csv()
-            new_str_obj = io.StringIO(new_csv)
+            wr.s3.to_csv(df=data, path=destination_bucket, boto3_session=session)
             return {
                 "status": "success",
-                "message": "csv written to byte stream",
-                "byte_stream": new_str_obj
+                "message": f"csv written to {destination_bucket}",
             }
         except ClientError as e:
             return {
                 "status": "failure",
                 "message": e.response,
+            }
+        except Exception as e:
+            logger.error("Failed to upload to ftp: %s", repr(e))
+            return {
+                "status": "failure",
+                "message": "did not write to s3. Please specify an appropriate destination i.e s3://my-bucket/my-file.csv",
             }
     else:
         return {

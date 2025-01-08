@@ -6,20 +6,20 @@ import awswrangler as wr
 from awswrangler.exceptions import NoFilesFound
 from src.transform_lambda.csv_utils import (
     get_csv_data_from_ingestion_bucket,
-    write_csv_data
+    write_csv_data,
 )
 from src.transform_lambda.parquet_utils import (
     get_parquet_data_from_ingestion_bucket,
-    write_parquet_data
+    write_parquet_data,
 )
 from src.transform_lambda.json_utils import (
     get_json_data_from_ingestion_bucket,
-    write_json_data
+    write_json_data,
 )
 import os
 
-def censor_sensitive_data(data: dict, pii_fields: list):
 
+def censor_sensitive_data(data: dict, pii_fields: list) -> dict:
     """Reads a data frame and censors the given fields
 
     Args:
@@ -35,7 +35,7 @@ def censor_sensitive_data(data: dict, pii_fields: list):
 
     df = data["data"]
     format = data["format"]
-    
+
     try:
         for field in pii_fields:
             if field in df:
@@ -45,9 +45,9 @@ def censor_sensitive_data(data: dict, pii_fields: list):
         return {"status": "success", "data": df, "format": format}
     except ClientError as ce:
         return {"status": "failure", "message": ce.response}
-    
-def get_data_from_bucket(bucket_path: str, session: boto3.session.Session):
 
+
+def get_data_from_bucket(bucket_path: str, session: boto3.session.Session) -> dict:
     """Reads a data file from a given path
 
     Args:
@@ -74,12 +74,14 @@ def get_data_from_bucket(bucket_path: str, session: boto3.session.Session):
             "status": "failure",
             "message": f"Unsuported data type. Can only process csv, json, and parquet file types",
         }
-    
+
     return response
 
-def write_sensitive_data(response_dict: dict):
 
-    """Reads a data frame into a file
+def write_sensitive_data(
+    response_dict: dict, destination_bucket: str, session: boto3.session.Session
+) -> dict:
+    """Reads a data frame into a file in the given bucket
 
     Args:
         response_dict: A dictionary of the form: {"status": "success", "data": df, "format": ".csv"} or
@@ -97,11 +99,11 @@ def write_sensitive_data(response_dict: dict):
         df = response_dict["data"]
 
         if file_extension == ".csv":
-            response = write_csv_data(df)
+            response = write_csv_data(df, destination_bucket, session)
         elif file_extension == ".parquet":
-            response = write_parquet_data(df)
+            response = write_parquet_data(df, destination_bucket, session)
         elif file_extension == ".json":
-            response = write_json_data(df)
+            response = write_json_data(df, destination_bucket, session)
         else:
             return {
                 "status": "failure",
@@ -109,9 +111,9 @@ def write_sensitive_data(response_dict: dict):
             }
     except:
         return {
-                "status": "failure",
-                "source of error": response_dict,
-                "message": "unexpected error",
-            }
-    
+            "status": "failure",
+            "source of error": response,
+            "message": "unexpected error",
+        }
+
     return response
