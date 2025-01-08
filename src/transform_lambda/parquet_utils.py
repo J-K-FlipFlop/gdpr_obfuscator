@@ -51,11 +51,7 @@ def write_parquet_data(
 
     if isinstance(data, pd.DataFrame):
         try:
-            wr.s3.to_parquet(
-                df=data,
-                path=destination_bucket,
-                boto3_session=session,
-            )
+            wr.s3.to_parquet(df=data, path=destination_bucket, boto3_session=session)
             return {
                 "status": "success",
                 "message": f"parquet written to {destination_bucket}",
