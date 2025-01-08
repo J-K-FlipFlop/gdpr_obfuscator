@@ -54,7 +54,7 @@ def write_json_data(
             wr.s3.to_json(df=data, path=destination_bucket, boto3_session=session)
             return {
                 "status": "success",
-                "message": f"csv written to {destination_bucket}",
+                "message": f"json written to {destination_bucket}",
             }
         except ClientError as e:
             return {

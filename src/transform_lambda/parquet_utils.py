@@ -58,7 +58,7 @@ def write_parquet_data(
             )
             return {
                 "status": "success",
-                "message": f"csv written to {destination_bucket}",
+                "message": f"parquet written to {destination_bucket}",
             }
         except ClientError as e:
             return {

@@ -33,10 +33,9 @@ def censor_sensitive_data(data: dict, pii_fields: list) -> dict:
             message: a relevant error message (if unsuccessful)
     """
 
-    df = data["data"]
-    format = data["format"]
-
     try:
+        df = data["data"]
+        format = data["format"]
         for field in pii_fields:
             if field in df:
                 df[field] = "***"
@@ -112,7 +111,7 @@ def write_sensitive_data(
     except:
         return {
             "status": "failure",
-            "source of error": response,
+            "source of error": response_dict,
             "message": "unexpected error",
         }
 
