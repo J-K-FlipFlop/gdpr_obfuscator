@@ -38,7 +38,10 @@ def censor_sensitive_data(data: dict, pii_fields: list):
     
     try:
         for field in pii_fields:
-            df[field] = "***"
+            if field in df:
+                df[field] = "***"
+            else:
+                print(f"{field} not in data set")
         return {"status": "success", "data": df, "format": format}
     except ClientError as ce:
         return {"status": "failure", "message": ce.response}
