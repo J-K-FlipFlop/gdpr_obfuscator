@@ -22,18 +22,25 @@ def lambda_handler(event, context):
     session = boto3.session.Session(region_name="eu-west-2")
     client = session.client("s3")
 
-    bucket_path = "s3://test-bucket-1-ac-gdpr/staff.parquet"
-    pii_fields = ["first_name","email_address"]
+    try:
+        bucket_path = event["file_to_obfuscate"]
+        pii_fields = event["pii_fields"]
+    except:
+        return {"status": "failure", "message" : "json input is incorrect"}
+    
+    try:
+        response1 = get_data_from_bucket(bucket_path, session)
 
-    response1 = get_data_from_bucket(bucket_path, session)
+        if response1["status"] == "failure":
+            return response1
 
-    response2 = censor_sensitive_data(response1, pii_fields)
-    print(response2)
+        response2 = censor_sensitive_data(response1, pii_fields)
+        print(response2)
 
-    processed_bucket = "gdpr-processed-zone/censored_staff.csv"
+        if response2["status"] == "failure":
+            return response2
 
-    response3 = write_sensitive_data(response2)
-    print(response3)
-    print(response3["byte_stream"])
-
-lambda_handler("unused", "unused")
+        response3 = write_sensitive_data(response2)
+        return response3
+    except:
+        return {"status": "failure", "message": "unexpected error"}
