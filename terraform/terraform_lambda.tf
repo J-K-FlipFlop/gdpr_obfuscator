@@ -3,7 +3,7 @@ resource "aws_lambda_function" "transform_lambda" {
   filename         = "${path.module}/../lambda_transform.zip"
   role             = aws_iam_role.transform_lambda_role.arn
   handler          = "handler.lambda_handler"
-  runtime          = "python3.11"
+  runtime          = "python3.12"
   source_code_hash = data.archive_file.transform_lambda_dir_zip.output_base64sha256
   layers           = ["arn:aws:lambda:eu-west-2:336392948345:layer:AWSSDKPandas-Python311:19", aws_lambda_layer_version.utility_layer_transform.arn]
   timeout          = 45
@@ -44,7 +44,7 @@ data "archive_file" "archive_transform" {
 
 resource "aws_lambda_layer_version" "utility_layer_transform" {
   layer_name          = "util_layer_transform"
-  compatible_runtimes = ["python3.11"]
+  compatible_runtimes = ["python3.12"]
   filename            = "${path.module}/../aws_utils/utils_transform.zip"
   source_code_hash    = data.archive_file.archive_transform.output_base64sha256
 }
