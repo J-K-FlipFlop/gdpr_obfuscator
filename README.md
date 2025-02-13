@@ -50,3 +50,4 @@ Note: The infrastructure can also be set up manually in the console instead if n
 ```
 The event is intended to likely be via a tool such as EventBridge, Step Functions, or Airflow. An event in the form above can be passed to the Lambda function in some way to trigger it.
 
+6. To run the code locally, comment out the block of code at the bottom in the file src/transform_lambda/handler.py and fill in the required fields. Then run the file.
