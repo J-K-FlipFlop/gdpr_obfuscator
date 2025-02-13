@@ -20,20 +20,27 @@ The tool will then anonymize the selected fields in the chosen file by replacing
 
 Currently csv, parquet, and json file formats are accepted.
 
-The project includes a Makefile to streamline setup, which includes the dowload of dependencies and the option to run other tools such as black, safety and bandit.
+The project includes a Makefile to streamline setup, which includes the dowload of dependencies and the option to run other tools such as black, safety and bandit. The command "make unit-test" will initiate all the tests. Currently 4 tests will not pass when run using the makefile, but they will pass when "pytest" is aarun manually after CD into the test folder.
 
 The project includes Terraform code to simplify the deployment of AWS resources required for this tool. If uploaded using terraform the state bucket in main.tf will have to be changed manually. The terraform does not upload all of the dependencies for using parquet files, the dependency for parquet will need to manually be added in a layer in aws if that wishes to be used. 
 
 ## Instructions to run
 
-1. Run the make file using the make command. The venv can then be entered using source venv/bin/activate. From there various make commands such as make unit-test and make check-coverage can be run to test the file is working.
+1. Install pyenv (found at https://github.com/pyenv/pyenv#installation). Run the command "pyenv local" to enable the specific version of python for this project.
 
-2. Manually create an S3 bucket in the aws console to be used as a state bucket in terraform. In the terraform/terraform_main.tf file the name of the bucket needs to be changed the name of the state bucket created in aws.
+2. Use the command "make" to run the makefile and install the neccessary pacakges. The venv can then be entered using source venv/bin/activate.
+From there various make commands can be run such as:
+    "make unit-test": This will run the unit tests. For now, when running using the makefile 4 tests will fail. These will pass if the command "pytest" is used when in the test directory.
+    "make dev-setup": Will install the packages bandit, safety, black, and coverage.
+    "make run-checks": Will run each of the packages mentioned above. Bandit will check for common security vulnerabilities. Safety checks for dependency vulnerabilities. Black reformats code to be pep8 compliant. Coverage checks how much of the code is covered by the tests.
+    "make all": Runs all the above.
 
-3. Next terraform needs to be run (got from https://www.terraform.io/). Use the commands 'terraform init', 'terraform plan' and 'terraform apply' to set up the required infrastructre in aws. Remember to be logged into the aws cli.
+3. Manually create an S3 bucket in the aws console to be used as a state bucket in terraform. In the terraform/terraform_main.tf file the name of the bucket needs to be changed the name of the state bucket created in aws.
+
+4. Next terraform needs to be run (got from https://www.terraform.io/). CD into the terraform directory and use the commands 'terraform init', 'terraform plan' and 'terraform apply' to set up the required infrastructre in aws. Remember to be logged into the aws cli.
 Note: The infrastructure can also be set up manually in the console instead if needed, with the src file being uploaded to it manually.
 
-4. An event can be triggered manually in the aws console in the lambda function UI using a test event in the form:
+5. Now that the code is in AWS, an event can be triggered manually in the aws console in the lambda function UI using a test event in the form:
 ```
 {
     "file_to_obfuscate": "s3://<source_bucket>/<source_file>",
@@ -41,4 +48,5 @@ Note: The infrastructure can also be set up manually in the console instead if n
     "destination": "s3://<destination_bucket>/<destination_file>"
 }
 ```
-The event is intended to likely to be via a tool such as EventBridge, Step Functions, or Airflow.
+The event is intended to likely be via a tool such as EventBridge, Step Functions, or Airflow. An event in the form above can be passed to the Lambda function in some way to trigger it.
+

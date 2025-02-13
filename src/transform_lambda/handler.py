@@ -43,3 +43,12 @@ def lambda_handler(event, context):
         return response3
     except:
         return {"status": "failure", "message": "unexpected error"}
+
+
+# event = {
+#     "file_to_obfuscate": "s3://<source_bucket>/<source_file>",
+#     "pii_fields": ["field1", "field2"],
+#     "destination": "s3://<destination_bucket>/<destination_file>"
+# }
+
+# lambda_handler(event, "unused")
