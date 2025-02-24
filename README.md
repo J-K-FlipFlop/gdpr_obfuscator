@@ -26,21 +26,19 @@ The project includes Terraform code to simplify the deployment of AWS resources 
 
 ## Instructions to run
 
-1. Install pyenv (found at https://github.com/pyenv/pyenv#installation). Run the command "pyenv local" to enable the specific version of python for this project.
-
-2. Use the command "make" to run the makefile and install the neccessary pacakges. The venv can then be entered using source venv/bin/activate.
+1. Use the command "make" to run the makefile and install the neccessary pacakges. The venv can then be entered using source venv/bin/activate.
 From there various make commands can be run such as:
     "make unit-test": This will run the unit tests.
     "make dev-setup": Will install the packages bandit, safety, black, and coverage.
     "make run-checks": Will run each of the packages mentioned above. Bandit will check for common security vulnerabilities. Safety checks for dependency vulnerabilities. Black reformats code to be pep8 compliant. Coverage checks how much of the code is covered by the tests.
     "make all": Runs all the above.
 
-3. Manually create an S3 bucket in the aws console to be used as a state bucket in terraform. In the terraform/terraform_main.tf file the name of the bucket needs to be changed the name of the state bucket created in aws.
+2. Manually create an S3 bucket in the aws console to be used as a state bucket in terraform. In the terraform/terraform_main.tf file the name of the bucket needs to be changed the name of the state bucket created in aws.
 
-4. Next terraform needs to be run (got from https://www.terraform.io/). CD into the terraform directory and use the commands 'terraform init', 'terraform plan' and 'terraform apply' to set up the required infrastructre in aws. Remember to be logged into the aws cli.
+3. Next terraform needs to be run (got from https://www.terraform.io/). CD into the terraform directory and use the commands 'terraform init', 'terraform plan' and 'terraform apply' to set up the required infrastructre in aws. Remember to be logged into the aws cli.
 Note: The infrastructure can also be set up manually in the console instead if needed, with the src file being uploaded to it manually.
 
-5. Now that the code is in AWS, an event can be triggered manually in the aws console in the lambda function UI using a test event in the form:
+4. Now that the code is in AWS, an event can be triggered manually in the aws console in the lambda function UI using a test event in the form:
 ```
 {
     "file_to_obfuscate": "s3://<source_bucket>/<source_file>",
@@ -50,4 +48,4 @@ Note: The infrastructure can also be set up manually in the console instead if n
 ```
 The event is intended to likely be via a tool such as EventBridge, Step Functions, or Airflow. An event in the form above can be passed to the Lambda function in some way to trigger it.
 
-6. To run the code locally, comment out the block of code at the bottom in the file src/transform_lambda/handler.py and fill in the required fields. Then run the file.
+5. To run the code locally, comment out the block of code at the bottom in the file src/transform_lambda/handler.py and fill in the required fields. Then run the file.
