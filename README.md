@@ -30,7 +30,7 @@ The project includes Terraform code to simplify the deployment of AWS resources 
 
 2. Use the command "make" to run the makefile and install the neccessary pacakges. The venv can then be entered using source venv/bin/activate.
 From there various make commands can be run such as:
-    "make unit-test": This will run the unit tests. For now, when running using the makefile 4 tests will fail. These will pass if the command "pytest" is used when in the test directory.
+    "make unit-test": This will run the unit tests.
     "make dev-setup": Will install the packages bandit, safety, black, and coverage.
     "make run-checks": Will run each of the packages mentioned above. Bandit will check for common security vulnerabilities. Safety checks for dependency vulnerabilities. Black reformats code to be pep8 compliant. Coverage checks how much of the code is covered by the tests.
     "make all": Runs all the above.
