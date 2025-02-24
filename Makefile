@@ -25,11 +25,6 @@ create-environment:
 	    $(PIP) install -q virtualenv virtualenvwrapper --break-system-packages; \
 	    virtualenv venv --python=$(PYTHON_INTERPRETER); \
 	)
-	@echo ">>> Setting up pyenv"
-	( \
-	    $(PIP) install -q pyenv --break-system-packages; \
-	    pyenv local; \
-	)
 
 # Define utility variable to help calling Python from the virtual environment
 ACTIVATE_ENV := source venv/bin/activate

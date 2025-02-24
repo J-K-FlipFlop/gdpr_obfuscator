@@ -43,5 +43,10 @@ def lambda_handler(event, context):
 #     "destination": "s3://<destination_bucket>/<destination_file>"
 # }
 
+event = {
+    "file_to_obfuscate": "s3://test-bucket-1-ac-gdpr/staff.csv",
+    "pii_fields": ["first_name", "email_address"],
+    "destination": "s3://gdpr-processed-zone/staff_obfuscated",
+}
 
 lambda_handler(event, "unused")
