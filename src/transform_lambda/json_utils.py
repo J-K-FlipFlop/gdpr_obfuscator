@@ -49,7 +49,7 @@ def write_json_data(
 
     if isinstance(data, pd.DataFrame):
         try:
-            wr.s3.to_json(df=data, path=destination_bucket, boto3_session=session)
+            wr.s3.to_json(df=data, path=destination_bucket, boto3_session=session, index=False)
             return {
                 "status": "success",
                 "message": f"json written to {destination_bucket}",

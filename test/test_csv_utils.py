@@ -61,9 +61,9 @@ class TestWritecsv:
         write_csv_data(df, f"s3://{bucket}/movie.csv", session)
         result = wr.s3.read_csv(path=f"s3://{bucket}/movie.csv")
         assert result.to_dict(orient="index") == {
-            0: {"Unnamed: 0": 0, "F Name": "John"},
-            1: {"Unnamed: 0": 1, "F Name": "Steve"},
-            2: {"Unnamed: 0": 2, "F Name": "Stefani"},
+            0: {"F Name": "John"},
+            1: {"F Name": "Steve"},
+            2: {"F Name": "Stefani"},
         }
 
     def test_missing_bucket_raises_client_error(self, s3_client):
