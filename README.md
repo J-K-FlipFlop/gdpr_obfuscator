@@ -20,14 +20,14 @@ The tool will then anonymize the selected fields in the chosen file by replacing
 
 Currently csv, parquet, and json file formats are accepted.
 
-The project includes a Makefile to streamline setup, which includes the dowload of dependencies and the option to run other tools such as black, safety and bandit. The command "make unit-test" will initiate all the tests. Currently 4 tests will not pass when run using the makefile, but they will pass when "pytest" is aarun manually after CD into the test folder.
+The project includes a Makefile to streamline setup, which includes the dowload of dependencies and the option to run other tools such as black, safety and bandit. The command "make unit-test" will initiate all the tests.
 
 The project includes Terraform code to simplify the deployment of AWS resources required for this tool. If uploaded using terraform the state bucket in main.tf will have to be changed manually. The terraform does not upload all of the dependencies for using parquet files, the dependency for parquet will need to manually be added in a layer in aws if that wishes to be used. 
 
 ## Instructions to run
 
 1. Use the command "make" to run the makefile and install the neccessary pacakges. The venv can then be entered using source venv/bin/activate.
-The run the command "make all."
+Then run the command "make all."
 If desired, various make commands can be run such as:
     "make unit-test": This will run the unit tests.
     "make dev-setup": Will install the packages bandit, safety, black, and coverage.
