@@ -1,18 +1,10 @@
 import boto3
-from botocore.exceptions import ClientError
-from datetime import datetime
-import awswrangler as wr
-from awswrangler.exceptions import NoFilesFound
-import os
-import math
-import pandas as pd
 from src.transform_lambda.utils import (
     get_data_from_bucket,
     censor_sensitive_data,
     write_sensitive_data,
 )
 import logging
-import os
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
@@ -51,4 +43,5 @@ def lambda_handler(event, context):
 #     "destination": "s3://<destination_bucket>/<destination_file>"
 # }
 
-# lambda_handler(event, "unused")
+
+lambda_handler(event, "unused")

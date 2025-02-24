@@ -32,7 +32,7 @@ class TestGetFileContents:
             Bucket=bucket,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        filename = "../test/data/dummy_csv.csv"
+        filename = "data/dummy_csv.csv"
         key = "dummy.csv"
         s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
         session = boto3.session.Session(
@@ -62,7 +62,7 @@ class TestGetFileContents:
             Bucket=bucket,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        filename = "../test/data/dummy_csv.csv"
+        filename = "data/dummy_csv.csv"
         key = "dummy.csv"
         s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
         session = boto3.session.Session(
@@ -78,7 +78,7 @@ class TestGetFileContents:
             Bucket=bucket,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        filename = "../test/data/dummy_parquet.parquet"
+        filename = "data/dummy_parquet.parquet"
         key = "dummy.parquet"
         s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
         session = boto3.session.Session(
@@ -94,7 +94,7 @@ class TestGetFileContents:
             Bucket=bucket,
             CreateBucketConfiguration={"LocationConstraint": "eu-west-2"},
         )
-        filename = "../test/data/dummy_json.json"
+        filename = "data/dummy_json.json"
         key = "dummy.json"
         s3_client.upload_file(Filename=filename, Bucket=bucket, Key=key)
         session = boto3.session.Session(

@@ -1,10 +1,8 @@
 import boto3
 from botocore.exceptions import ClientError
-from datetime import datetime
 import pandas as pd
 import awswrangler as wr
 from awswrangler.exceptions import NoFilesFound
-import io
 import logging
 
 logger = logging.getLogger("ftpuploader")
